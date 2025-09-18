@@ -1,6 +1,7 @@
 main.js.map
 main.js
 package-lock.json
-.vscode
-node_modules
+.vscode/
+node_modules/
+dist/   
 
