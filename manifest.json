@@ -1,0 +1,11 @@
+{
+  "id": "obsidian-tag-manager-plugin",
+  "name": "Obsidian Tag Manager Plugin",
+  "version": "1.0.0",
+  "minAppVersion": "1.8.10",
+  "description": "A plugin to manage tags in Obsidian notes, allowing users to add and remove tags based on directory structure.",
+  "author": "ztcheck",
+  "authorUrl": "https://github.com/yourusername/obsidian-tag-manager-plugin",
+  "fundingUrl": "https://obsidian.md/pricing",
+  "isDesktopOnly": false
+}
