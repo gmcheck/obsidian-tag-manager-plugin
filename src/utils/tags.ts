@@ -193,3 +193,30 @@ export async function updateNoteMetadata(
 
   await app.vault.modify(file, newContent);
 }
+
+/**
+ * 将目录名规范化为 Obsidian 标签的安全形式：
+ * - 反斜杠转为正斜杠（支持嵌套标签）
+ * - 空白转为短横线
+ * - 删除不安全字符（保留字母、数字、_ - /）
+ * - 合并连续分隔符，去除首尾斜杠
+ * - 转为小写
+ * 返回 null 表示无法生成合法标签（应跳过）
+ */
+export function sanitizeTag(tag: string): string | null {
+  if (!tag) return null;
+  let t = String(tag).trim();
+  // turn backslashes into slashes
+  t = t.replace(/\\/g, "/");
+  // replace whitespace with hyphen
+  t = t.replace(/\s+/g, "-");
+  // remove characters except alnum, -, _, /
+  t = t.replace(/[^A-Za-z0-9\-_/]/g, "");
+  // collapse multiple slashes
+  t = t.replace(/\/+/g, "/");
+  // remove leading/trailing slashes or hyphens
+  t = t.replace(/^[-\/]+|[-\/]+$/g, "");
+  t = t.toLowerCase();
+  if (!t) return null;
+  return t;
+}

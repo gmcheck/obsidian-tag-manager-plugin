@@ -1,5 +1,5 @@
 import { App, TFile, Notice } from "obsidian";
-import { getTagsFromFile, saveTagsToFile } from "../utils/tags";
+import { getTagsFromFile, saveTagsToFile, sanitizeTag } from "../utils/tags";
 
 /**
  * addTagCommand
@@ -21,15 +21,17 @@ export async function addTagCommand(
   async function addTagToFile(file: TFile) {
     try {
       const parts = file.path.split("/");
-      const dirName = parts.length > 1 ? parts[parts.length - 2] : "";
+      const rawDirName = parts.length > 1 ? parts[parts.length - 2] : "";
+      const dirName = sanitizeTag(rawDirName);
       if (!dirName) {
         skipped++;
         return;
       }
 
       const existing = (await getTagsFromFile(app, file)) || [];
-      // 如果已经存在该目录标签则跳过
-      if (existing.map(String).includes(dirName)) {
+      // 判断是否已存在相同规范化值
+      const exists = existing.some((t) => sanitizeTag(String(t)) === dirName);
+      if (exists) {
         skipped++;
         return;
       }

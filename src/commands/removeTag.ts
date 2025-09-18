@@ -1,5 +1,5 @@
 import { App, TFile, Notice } from "obsidian";
-import { getTagsFromFile, saveTagsToFile } from "../utils/tags";
+import { getTagsFromFile, saveTagsToFile, sanitizeTag } from "../utils/tags";
 
 /**
  * removeTagCommand
@@ -19,14 +19,18 @@ export async function removeTagCommand(
   async function removeTagFromFile(file: TFile) {
     try {
       const parts = file.path.split("/");
-      const dirName = parts.length > 1 ? parts[parts.length - 2] : "";
+      const rawDirName = parts.length > 1 ? parts[parts.length - 2] : "";
+      const dirName = sanitizeTag(rawDirName);
       if (!dirName) {
         skipped++;
         return;
       }
 
       const existing = (await getTagsFromFile(app, file)) || [];
-      const updated = existing.filter((t) => String(t) !== dirName);
+      // 仅移除与规范化目录名相等的项，保留其它原始标签
+      const updated = existing.filter(
+        (t) => sanitizeTag(String(t)) !== dirName
+      );
 
       // 如果没有变化则跳过
       if (updated.length === (existing || []).length) {
